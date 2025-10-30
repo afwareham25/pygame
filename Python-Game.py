@@ -17,37 +17,36 @@ GAME_OVER = False
 class Player:
   X = 0
   Y = 0
-  WIDTH = 100
-  HEIGHT = 100
+  RADIUS = 100
   score = 0
   speed = 1.0
 
 
 def update(p):
-  if p.X < 0:
-    p.X = 0 
-  if p.X > SCREEN_WIDTH - p.WIDTH:
-    p.X = SCREEN_WIDTH - p.WIDTH
-  if p.Y < 0:
-    p.Y = 0
-  if p.Y > SCREEN_HEIGHT - p.HEIGHT:
-    p.Y = SCREEN_HEIGHT - p.HEIGHT
+  if p.X < 0 + p.RADIUS/2:
+    p.X = 0 + p.RADIUS/2
+  if p.X > SCREEN_WIDTH - p.RADIUS/2:
+    p.X = SCREEN_WIDTH - p.RADIUS/2
+  if p.Y < 0 - p.RADIUS/2:
+    p.Y = 0 - p.RADIUS/2
+  if p.Y > SCREEN_HEIGHT - p.RADIUS * 1.5:
+    p.Y = SCREEN_HEIGHT - p.RADIUS * 1.5
 
   if p == coin:
-    if p.X == 0:
+    if p.X == 0 + p.RADIUS/2:
       coin.speedX = -coin.speedX
-    if p.Y == 0:
+    if p.Y == 0 - p.RADIUS/2:
       coin.speedY = -coin.speedY
-    if p.X == SCREEN_WIDTH - p.WIDTH:
+    if p.X == SCREEN_WIDTH - p.RADIUS/2:
       coin.speedX = -coin.speedX
-    if p.Y == SCREEN_HEIGHT - p.HEIGHT:
+    if p.Y == SCREEN_HEIGHT - p.RADIUS * 1.5:
       coin.speedY = -coin.speedY
     
 
 
 def collision(a, b):
-  if a.X <= a.WIDTH + b.X and a.X >= -a.WIDTH + b.X:
-    if a.Y <= a.HEIGHT + b.Y and a.Y >= -a.HEIGHT + b.Y:
+  if a.X <= a.RADIUS + b.X and a.X >= -a.RADIUS + b.X:
+    if a.Y <= a.RADIUS + b.Y and a.Y >= -a.RADIUS + b.Y:
       return True
 
   
@@ -70,14 +69,16 @@ def show_player(p):
   if GAME_OVER == True:
     return
   
-  pygame.draw.circle(screen, p.colour, (p.X, -p.Y + SCREEN_HEIGHT - p.HEIGHT), 50)
+  pygame.draw.circle(screen, p.colour, (p.X, -p.Y + SCREEN_HEIGHT - p.RADIUS), 50)
   if p == coin:
-    p.HEIGHT = 75
-    p.WIDTH = 75
+    p.RADIUS = 75
   if p != coin:
-    if p.X <= 75 + coin.X and p.X >= -75 + coin.X:
-     if p.Y <= 75 + coin.Y and p.Y >= -75 + coin.Y:
-      p.score += 1
+    if (p.X <= 75 + coin.X and p.X >= -75 + coin.X and 
+        p.Y <= 75 + coin.Y and p.Y >= -75 + coin.Y):
+          p.score += 1
+          coin.colour = "orange"
+          coin.speedX *= 1.001
+
     font = pygame.font.SysFont(None, 48)
     t = font.render(str(p.score), 1, (255,255,255))
     textx = 100
@@ -96,9 +97,10 @@ while True:
       exit()
 
   coin.X += coin.speedX
-  coin.Y += coin.speedY    
+  coin.Y += coin.speedY
+  coin.colour = "yellow"    
+ 
   keys = pygame.key.get_pressed()
-
   if keys[pygame.K_LEFT]:
     p1.X -= 20
   if keys[pygame.K_RIGHT]:
@@ -120,13 +122,13 @@ while True:
 
   screen.fill((100, 100, 100))
 
-  if p1.score >= 100:
+  if p1.score >= 150:
     font = pygame.font.SysFont(None, 48)
     t = font.render(str("Player 1 Wins!"), 1, (255,255,255))
     screen.blit(t, (SCREEN_WIDTH/3, SCREEN_HEIGHT/2 - t.get_height()/2))
     GAME_OVER = True
 
-  if p2.score >= 100:
+  if p2.score >= 150:
     font = pygame.font.SysFont(None, 48)
     t = font.render(str("Player 2 Wins!"), 1, (255,255,255))
     screen.blit(t, (SCREEN_WIDTH/3, SCREEN_HEIGHT/2 - t.get_height()/2))
