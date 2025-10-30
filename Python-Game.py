@@ -12,6 +12,7 @@ GAME_OVER = False
 
 #smallfont = pygame.font.SysFont('Corbel',35)
 #text = smallfont.render("Restart?" , True , WHITE)
+##
 
 class Player:
   X = 0
